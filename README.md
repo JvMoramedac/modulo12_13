@@ -28,8 +28,8 @@ Para que los datos se guarden correctamente, el script utiliza los siguientes í
 
 ## 💻 El Código (Script de Python)
 
-[código](visual.png)
+![código](visual.png)
 
 ## Resultado
 
-[resultado](docker.png)
+![resultado](docker.png)
