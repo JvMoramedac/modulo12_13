@@ -28,65 +28,8 @@ Para que los datos se guarden correctamente, el script utiliza los siguientes í
 
 ## 💻 El Código (Script de Python)
 
-A continuación se muestra el código completo utilizado para la migración:
+[código](visual.png)
 
-```python
-import pandas as pd
-import psycopg2
-import os
+## Resultado
 
-# 1. Configuración de conexión
-params = {
-    "host": "localhost",
-    "port": 5432,
-    "database": "postgres",
-    "user": "odoo",
-    "password": "odoo"
-}
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ruta_csv = os.path.join(BASE_DIR, "listado.csv")
-
-try:
-    # Lectura con codificación específica para caracteres españoles
-    df = pd.read_csv(ruta_csv, encoding="latin1")
-    print("✅ Archivo listado.csv leído correctamente.")
-
-    conn = psycopg2.connect(**params)
-    cur = conn.cursor()
-    print("✅ Conexión con PostgreSQL establecida.")
-
-    # 2. Creación de la tabla
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS contactos_mailing (
-            id SERIAL PRIMARY KEY,
-            nombre TEXT,
-            domicilio TEXT,
-            localidad TEXT,
-            cp TEXT,
-            telefono TEXT
-        );
-    """)
-
-    # 3. Inserción de datos (Mapeo por índice de columna)
-    for _, row in df.iterrows():
-        cur.execute("""
-            INSERT INTO contactos_mailing (nombre, domicilio, localidad, cp, telefono)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (
-            str(row.iloc[0]), # Código -> nombre
-            str(row.iloc[1]), # Denominación -> domicilio
-            str(row.iloc[2]), # Nombre -> localidad
-            str(row.iloc[3]), # Dependencia -> cp
-            str(row.iloc[4])  # Domicilio -> telefono
-        ))
-
-    conn.commit()
-    print(f"🚀 ¡Éxito! Se han importado {len(df)} registros.")
-
-except Exception as e:
-    print(f"❌ Error: {e}")
-    if 'conn' in locals(): conn.rollback()
-finally:
-    if 'cur' in locals(): cur.close()
-    if 'conn' in locals(): conn.close()
+[resultado](docker.png)
